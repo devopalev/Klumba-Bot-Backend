@@ -1,2 +1,0 @@
-class State:
-    WRITING_DECLINE_COMMENT = 1
