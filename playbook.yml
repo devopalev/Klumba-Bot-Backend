@@ -1,0 +1,108 @@
+- hosts: klumba
+  remote_user: root
+  tasks:
+    - name: Add Certbot repo
+      apt_repository:
+       repo: ppa:certbot/certbot
+       state: present
+    - name: Install packages
+      apt:
+        pkg:
+          - build-essential
+          - python3-dev
+          - nginx
+          - uwsgi
+          - uwsgi-plugin-python3
+          - language-pack-ru
+        state: latest
+    - name: Uninstall OS-level Certbot packages
+      apt:
+        pkg: python-certbot-nginx, certbot
+        state: absent
+        purge: yes
+    - name: Update Snap
+      snap:
+        name: core
+    - name: Install Certbot Snap
+      snap:
+        name: certbot
+        classic: yes
+    - name: Create Certbot symlink
+      file:
+        src: /snap/bin/certbot
+        dest: /usr/bin/certbot
+        state: link
+        force: yes
+    - name: Set Certbot plugin containment level
+      command: snap set certbot trust-plugin-with-root=ok
+    - name: Install Certbot Cloudflare plugin
+      snap:
+        name: certbot-dns-cloudflare
+    - name: Install Python packages
+      pip:
+        name:
+          - schedule
+          - flask
+          - uwsgi
+          - pandas
+          - openpyxl
+          - undecorated
+          - pexpect
+          - python-telegram-bot
+          - traceback-with-variables
+          - requests
+    - name: Copy workdir
+      synchronize:
+        src: '{{ playbook_dir }}'
+        dest: /opt/
+        rsync_opts:
+          - "--exclude=.git"
+          - "--exclude=.idea"
+    - name: Copy main service
+      copy:
+        src: /opt/klumba_bot/klumba_bot.service
+        dest: /etc/systemd/system/klumba_bot.service
+        remote_src: yes
+        force: yes
+    - name: Copy backend service
+      copy:
+        src: /opt/klumba_bot/source/client_backend/wsgi_client_photos.service
+        dest: /etc/systemd/system/wsgi_client_photos.service
+        remote_src: yes
+        force: yes
+    - name: Remove default Ngingx config
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+    - name: Copy Nginx config
+      copy:
+        src: /opt/klumba_bot/source/client_backend/client_photos_backend.conf
+        dest: /etc/nginx/sites-available/client_photos_backend.conf
+        remote_src: yes
+        force: yes
+    - name: Create Nginx config symlink
+      file:
+        src: /etc/nginx/sites-available/client_photos_backend.conf
+        dest: /etc/nginx/sites-enabled/client_photos_backend.conf
+        state: link
+        force: yes
+    - name: Run Certbot
+      expect:
+        command: certbot --dns-cloudflare --dns-cloudflare-credentials /root/.secrets/cloudflare.ini -d services.klumba71.ru,www.services.klumba71.ru -i nginx
+        responses:
+         (.*)What would you like to do?(.*): 1
+    - name: Restart Nginx
+      systemd:
+        name: nginx
+        state: restarted
+    - name: Start main service
+      systemd:
+        name: klumba_bot
+        daemon_reload: yes
+        enabled: yes
+        state: restarted
+    - name: Start backend service
+      systemd:
+        name: wsgi_client_photos
+        enabled: yes
+        state: restarted

@@ -1,0 +1,14 @@
+[Unit]
+Description=Klumba Common Tg Bot Service
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+WorkingDirectory=/opt/klumba_bot
+ExecStart=/usr/bin/env python3 /opt/klumba_bot/main.py
+
+[Install]
+WantedBy=multi-user.target

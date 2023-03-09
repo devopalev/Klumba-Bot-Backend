@@ -1,0 +1,14 @@
+[Unit]
+Description=Klumba WSGI backend for client photo reviews
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+WorkingDirectory=/opt/klumba_bot/source/client_backend
+ExecStart=/usr/bin/env uwsgi --ini /opt/klumba_bot/source/client_backend/app.ini
+
+[Install]
+WantedBy=multi-user.target

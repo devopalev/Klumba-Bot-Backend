@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить курьера</title>
+	<style>	
+		.frm {
+			position: absolute;
+			top: 40%;
+			left: 50%;
+			transform: translate(-49%, -49%);
+			width: 50%;
+			height: 50%;
+		}
+		
+		.btn {
+		  display: block;
+		  width: 50%;
+		  border: none;
+		  background-color: #04AA6D;
+		  padding: 14px 28px;
+		  font-size: 20px;
+		  cursor: pointer;
+		  text-align: center;
+		}
+		
+		input {
+		  height: 10%;
+		  font-size: 150%;
+		}
+		
+		label {
+		  font-size: 150%;
+		  font-weight: bold;
+		}
+		
+	</style>
+</head>
+<body>
+	<div align="center">
+	<form action='#' onsubmit="addCourier(this);return false" class="frm">
+	  <label for="surname">Фамилия:</label><br>
+	  <input type="text" id="surname" name="surname" value=""><br><br>
+	  <label for="name">Имя:</label><br>
+	  <input type="text" id="name" name="name" value=""><br><br>
+	  <label for="phone">Телефон (любой формат):</label><br>
+	  <input type="text" id="phone" name="phone" value=""><br><br>
+      <label for="email">Email:</label><br>
+	  <input type="text" id="email" name="email" value=""><br><br>
+	  <input type="submit" value="Добавить" id="btn" class="btn" disabled>
+	</form>
+	</div> 
+
+
+	<script src="//api.bitrix24.com/api/v1/"></script>
+	<script>
+	// Make a call to REST when JS SDK is loaded
+	BX24.init(function(){
+	    
+	    document.getElementById('btn').disabled = false;
+	    console.log('B24 SDK is ready!', BX24.isAdmin());
+
+	});
+	
+	
+	function addCourier(form) {
+		document.getElementById('btn').disabled = true;
+	
+		surname = document.getElementById('surname').value;
+		name = document.getElementById('name').value;
+		phone = document.getElementById('phone').value;
+		email = document.getElementById('email').value;
+
+		console.log('surname ', surname, 'name ', name,  'phone ', phone, 'email', email);
+		
+		BX24.callMethod('user.add', {'NAME': name, 'LAST_NAME': surname, 'PERSONAL_MOBILE': phone, 
+		'EMAIL': email, 'UF_DEPARTMENT': [223], 'UF_USR_1614265033324': '2347'},
+		 function(result) {
+		    document.getElementById('btn').disabled = false;
+		    
+		    if(result.error())
+		    {
+		    	console.log(result.error());
+			alert('Ошибка запроса: ' + result.error());
+		    }
+		    else
+		    {
+			console.log(result.data());
+			alert('Курьер ' + name + ' ' + surname + ' добавлен!');
+		    }
+		    
+		    form.reset();
+		});
+	}
+	</script>
+</body>
+</html>
