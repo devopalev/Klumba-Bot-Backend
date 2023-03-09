@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Интерфейс курьера</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+
+        body {
+            color: var(--tg-theme-text-color);
+            background: var(--tg-theme-bg-color);
+            font-size: 30px;
+        }
+
+        link{
+            color: var(--tg-theme-link-color);
+        }
+
+        button{
+            background: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+        }
+
+        .deals {
+            height: 90%;
+            width: 100%;
+            overflow-y: scroll;
+            position: fixed;
+        }
+
+        .deal {
+            border-radius: 12px;
+            border-color:#ddd #333 #333 #ddd;
+            border-style:solid;
+            border-width:1px;
+            margin-top: 5%;
+            margin-left: 2%;
+            margin-right: 3%;
+            padding: 3%;
+            font-size: larger;
+        }
+
+        .deal.hidden {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s, visibility 0s 1s;
+        }
+
+        .deal p {
+            font-size: 100%;
+
+        }
+
+        .deal_buttons {
+            width: 100%;
+        }
+
+        .btn_deal {
+            margin-left: 2%;
+            margin-right: 2%;
+            position: relative;
+            display: inline-block;
+            width: 46%;
+            font-family: arial,sans-serif;
+            font-size: 100%;
+            font-weight: bold;
+            color: rgb(68,68,68);
+            text-decoration: none;
+            user-select: none;
+            /*padding: .2em 1.2em;*/
+            padding-right: 10%;
+            padding-left: 10%;
+            outline: none;
+            border: 1px solid rgba(0,0,0,.1);
+            border-radius: 2px;
+            background: rgb(245,245,245) linear-gradient(#f4f4f4, #f1f1f1);
+            transition: all .218s ease 0s;
+        }
+
+        .main_buttons {
+            /*background-color: var(--tg-theme-bg-color);*/
+            height: 5%; /* Full-height: remove this if you want "auto" height */
+            width: 100%; /* Set the width of the sidebar */
+
+            position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+            /*z-index: 1; /* Stay on top */
+            bottom: 0; /* Stay at the top */
+
+            overflow-x: hidden; /* Disable horizontal scroll */
+            /*padding-top: 5%;
+            padding-left: 5%;
+            padding-right: 5%;*/
+
+            margin-bottom: 5%;
+
+
+            justify-content: center;
+            align-items: center;
+
+        }
+
+
+
+        .main_buttons button {
+            margin: 1%;
+            font-size: 100%;
+            width: 30%;
+            vertical-align: middle;
+            display: inline-block;
+            font-weight: 700;
+            color: rgb(209,209,217);
+            text-decoration: none;
+            text-shadow: 0 -1px 2px rgba(0,0,0,.2);
+            padding: .5em 1em;
+            outline: none;
+            border-radius: 3px;
+            background: linear-gradient(rgb(110,112,120), rgb(81,81,86)) rgb(110,112,120);
+            box-shadow:
+                    0 1px rgba(255,255,255,.2) inset,
+                    0 3px 5px rgba(0,1,6,.5),
+                    0 0 1px 1px rgba(0,1,6,.2);
+            transition: .2s ease-in-out;
+        }
+
+        .main_button:hover:not(:active) {
+            background: linear-gradient(rgb(126,126,134), rgb(70,71,76)) rgb(126,126,134);
+        }
+
+
+
+    </style>
+
+</head>
+<body>
+    <div id="deals" class="deals"></div>
+    <div class="main_buttons">
+        <button id="btn_today" class="main_button">Сегодня</button>
+        <button id="btn_tomorrow" class="main_button">Завтра</button>
+        <button id="btn_early" class="main_button">Назначенные</button>
+    </div>
+    <script src="/webapp/courier.js"></script>
+</body>
+</html>

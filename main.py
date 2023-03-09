@@ -1,15 +1,12 @@
-import logging
+import source.logger
 import threading
 import source.TelegramWorker as TgWorker
 import source.StorageWorker as StorageWorker
 import source.http_server.HTTPServer as HTTPServer
-from source import config as cfg
-
-# journalctl logging when running via systemctl
-logging.basicConfig(level=cfg.LOG_LEVEL, format=cfg.LOG_FORMAT)
 
 
 def main():
+    source.logger.init_logger()
     http_daemon = threading.Thread(name='bot_http_server', daemon=True,
                                    target=HTTPServer.http_serve)
     http_daemon.start()
@@ -18,4 +15,5 @@ def main():
     TgWorker.run()
 
 
-main()
+if __name__ == "__main__":
+    main()
